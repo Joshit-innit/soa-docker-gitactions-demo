@@ -7,14 +7,16 @@ services:
       POSTGRES_PASSWORD: docker
       POSTGRES_DB: klustudentdb
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - springboot-postgres-net
 
   backend:
-    image: tammanajoshit/docker-git-actions-backend:latest
+    build:
+      context: ./STUDENTAPI-SPRINGBOOT
+      dockerfile: backend.Dockerfile
     container_name: docker-springboot
     ports:
       - "2025:2000"
@@ -25,7 +27,9 @@ services:
       - springboot-postgres-net
 
   frontend:
-    image: tammanajoshit/docker-git-actions-frontend:latest
+    build:
+      context: ./STUDENTAPI-REACT
+      dockerfile: frontend.Dockerfile
     container_name: docker-react
     ports:
       - "3000:80"
