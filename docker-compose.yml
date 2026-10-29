@@ -5,14 +5,14 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Root@1234
-      POSTGRES_DB: exam_2400030188
+      POSTGRES_DB: exam_2400032515
     ports:
       - "5432:5432"
     volumes:
       # Dedicated volume avoids inheriting credentials from an unrelated local database.
       - podcast_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d exam_2400030188"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d exam_2400032515"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -25,9 +25,9 @@ services:
     image: tammanajoshit/docker-backend-2400032515:latest
     container_name: backend-container
     ports:
-      - "8081:8081"
+      - "2025:2000"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/exam_2400030188
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/exam_2400032515
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=Root@1234
     depends_on:
@@ -43,7 +43,7 @@ services:
     image: tammanajoshit/docker-frontend-2400032515:latest
     container_name: frontend-container
     ports:
-      - "5173:80"
+      - "3000:80"
     depends_on:
       - backend
     restart: on-failure
