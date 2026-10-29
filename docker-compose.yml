@@ -4,39 +4,55 @@ services:
     container_name: postgres-db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: docker
-      POSTGRES_DB: klustudentdb
+      POSTGRES_PASSWORD: Root@1234
+      POSTGRES_DB: exam_2400030188
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      # Dedicated volume avoids inheriting credentials from an unrelated local database.
+      - podcast_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d exam_2400030188"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
-      - springboot-postgres-net
+      - app-net
 
   backend:
-    image: tammanajoshit/docker-git-actions-backend:latest
-    container_name: docker-springboot
+    build:
+      context: ./backend
+    image: tammanajoshit/docker-backend-2400032515:latest
+    container_name: backend-container
     ports:
-      - "2025:2000"
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/exam_2400030188
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Root@1234
     depends_on:
-      - postgresdb
+      postgresdb:
+        condition: service_healthy
     restart: on-failure
     networks:
-      - springboot-postgres-net
+      - app-net
 
   frontend:
-    image: tammanajoshit/docker-git-actions-frontend:latest
-    container_name: docker-react
+    build:
+      context: ./frontend
+    image: tammanajoshit/docker-frontend-2400032515:latest
+    container_name: frontend-container
     ports:
-      - "3000:80"
+      - "5173:80"
     depends_on:
       - backend
     restart: on-failure
     networks:
-      - springboot-postgres-net
+      - app-net
 
 volumes:
-  postgres_data:
+  podcast_data:
 
 networks:
-  springboot-postgres-net:
+  app-net:
+    driver: bridge
