@@ -17,6 +17,7 @@ services:
     build:
       context: ./STUDENTAPI-SPRINGBOOT
       dockerfile: backend.Dockerfile
+    platform: linux/amd64
     container_name: docker-springboot
     ports:
       - "2025:2000"
@@ -30,6 +31,7 @@ services:
     build:
       context: ./STUDENTAPI-REACT
       dockerfile: frontend.Dockerfile
+    platform: linux/amd64
     container_name: docker-react
     ports:
       - "3000:80"
